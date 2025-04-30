@@ -1,3 +1,13 @@
+const http = require('http');
+const agent = new http.Agent({ family: 4 });
+
+await axios.post(
+  process.env.N8N_WEBHOOK_URL,
+  data,
+  { httpAgent: agent }
+);
+
+
 require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios');
