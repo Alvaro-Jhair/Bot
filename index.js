@@ -71,9 +71,9 @@ async function sendToN8n(data) {
         console.log('Respuesta de n8n:', response.data);
         return response.data;
     } catch (error) {
-        console.error('Error al enviar datos a n8n:', error.message);
+        console.error('Error al enviar datos a n8n:', error);
         if (error.response) {
-            console.error('Detalles del error:', error.response.data);
+            console.error('Detalles del error:', error.response);
         }
         return null;
     }
