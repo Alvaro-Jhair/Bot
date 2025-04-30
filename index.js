@@ -1,18 +1,12 @@
-const http = require('http');
-const agent = new http.Agent({ family: 4 });
-
-await axios.post(
-  process.env.N8N_WEBHOOK_URL,
-  data,
-  { httpAgent: agent }
-);
-
-
 require('dotenv').config();
+const fs          = require('fs');
+const path        = require('path');
+const http        = require('http');
+const axios       = require('axios');
 const TelegramBot = require('node-telegram-bot-api');
-const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
+
+// CREA EL AGENTE IPv4-ONLY justo después de los requires
+const ipv4agent = new http.Agent({ family: 4 });
 
 // Verificar si ya hay una instancia corriendo
 const lockFile = path.join(__dirname, 'bot.lock');
@@ -77,13 +71,18 @@ bot.on('polling_error', (error) => {
 async function sendToN8n(data) {
     try {
         console.log('Enviando datos a n8n:', data);
-        const response = await axios.post(N8N_WEBHOOK_URL, data);
+        // PASA EL AGENTE EN LAS OPCIONES
+        const response = await axios.post(
+            process.env.N8N_WEBHOOK_URL,
+            data,
+            { httpAgent: ipv4agent }
+        );
         console.log('Respuesta de n8n:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error al enviar datos a n8n:', error);
         if (error.response) {
-            console.error('Detalles del error:', error.response);
+            console.error('Detalles del error:', error.response.data || error.response);
         }
         return null;
     }
